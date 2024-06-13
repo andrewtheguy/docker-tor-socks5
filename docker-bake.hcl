@@ -3,7 +3,7 @@ variable "TAG" {
 
 
 variable "IMAGE_NAME" {
-    default="andrewchen5678/tor-socks5"
+    default="ghcr.io/andrewtheguy/tor-socks5"
 }
 
 
