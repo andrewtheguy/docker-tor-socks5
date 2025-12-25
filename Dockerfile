@@ -1,7 +1,7 @@
 # https://github.com/osminogin/docker-tor-simple/blob/master/Dockerfile
 FROM alpine:3.23
 
-RUN apk add --no-cache curl tor 
+RUN apk add --no-cache curl tor tini
 
 COPY torrc /etc/tor/torrc
 
@@ -15,4 +15,5 @@ VOLUME ["/var/lib/tor"]
 
 USER tor
 
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["tor"]
