@@ -8,7 +8,7 @@ on:
         required: false
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 env:
@@ -19,14 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_tag: ${{ steps.tag.outputs.release_tag }}
+      is_release: ${{ steps.tag.outputs.is_release }}
     steps:
       - name: Generate Tag
         id: tag
         run: |
           if [ -z "${{ inputs.tag }}" ]; then
             echo "release_tag=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+            echo "is_release=false" >> $GITHUB_OUTPUT
           else
             echo "release_tag=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+            echo "is_release=true" >> $GITHUB_OUTPUT
           fi
 
   docker-build:
@@ -92,3 +95,21 @@ jobs:
             ${{ env.GHCR_IMAGE }}:${TAG}-amd64 \
             ${{ env.GHCR_IMAGE }}:${TAG}-arm64
           docker manifest push ${{ env.GHCR_IMAGE }}:latest
+
+  release:
+    needs: [setup, docker-manifest]
+    runs-on: ubuntu-latest
+    if: needs.setup.outputs.is_release == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.setup.outputs.release_tag }}
+          name: ${{ needs.setup.outputs.release_tag }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
