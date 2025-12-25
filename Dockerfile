@@ -1,6 +1,8 @@
 # https://github.com/osminogin/docker-tor-simple/blob/master/Dockerfile
 FROM alpine:3.23
 
+LABEL org.opencontainers.image.source=https://github.com/andrewtheguy/docker-tor-socks5
+
 RUN apk add --no-cache curl tor tini
 
 COPY torrc /etc/tor/torrc
