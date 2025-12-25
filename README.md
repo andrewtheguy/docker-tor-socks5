@@ -1,3 +1,30 @@
-A simple tor docker image with socks5 proxy based on https://github.com/osminogin/docker-tor-simple/blob/master/Dockerfile with some tweaks like use the stable rather than the edge version of alpine and log to console instead of a log file
+# docker-tor-socks5
 
-run `./build.sh` and it will build the image for amd64 and arm64
+A simple Tor SOCKS5 proxy Docker image based on Alpine Linux.
+
+Based on [osminogin/docker-tor-simple](https://github.com/osminogin/docker-tor-simple) with some tweaks:
+- Uses stable Alpine instead of edge
+- Logs to console instead of file
+- Uses tini as init wrapper
+
+## Usage
+
+```bash
+docker run -d -p 9050:9050 ghcr.io/andrewtheguy/tor-socks5
+```
+
+Test the proxy:
+
+```bash
+curl -x socks5h://127.0.0.1:9050 https://check.torproject.org/api/ip
+```
+
+## Build
+
+Local build:
+
+```bash
+./build.sh
+```
+
+Or trigger the GitHub Actions workflow manually to build and push multi-arch images (amd64/arm64).
